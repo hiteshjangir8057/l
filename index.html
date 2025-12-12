@@ -1,1 +1,733 @@
-# l
+<!-- INDIAN SCHOOL CALENDAR GENERATOR - FINAL WITH SMART SAVE (JPG/PDF) -->
+<!DOCTYPE html>
+<html lang="en">
+<meta name="google-site-verification" content="fFIXkcyZTbl19Z5flNPZhIfRUJ3h5U13LTPWRhxcoRk" />
+<head>
+<meta name="google-site-verification" content="fFIXkcyZTbl19Z5flNPZhIfRUJ3h5U13LTPWRhxcoRk" />
+  	
+<!-- BRANDING SCHEMA FOR GOOGLE SEARCH -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "HiteshDesk",
+  "alternateName": ["Hitesh Desk", "Indian School Calendar Generator"],
+  "url": "https://hiteshdesk.blogspot.com/"
+}
+</script>
+  	
+  	
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 👇 FAVICON / LOGO CODE 👇 -->
+    <link rel="icon" href="https://raw.githubusercontent.com/hiteshjangir8057/calendar-icon/refs/heads/main/Calendar%20icon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/hiteshjangir8057/calendar-icon/refs/heads/main/Calendar%20icon.ico" type="image/x-icon" />
+    <link rel="icon" href="https://raw.githubusercontent.com/hiteshjangir8057/calendar-icon/refs/heads/main/cal.png" />
+    
+    <!-- SEO METADATA -->
+    <title>HiteshDesk</title>
+  
+  <!-- 👇 SEO SETTINGS (Yahan Paste Karein) 👇 -->
+    <meta name="description" content="HiteshDesk - Create professional Indian School Calendars for 2025-2026. Free tool for CBSE/ICSE boards with Holidays, Exams, Logos. Save as Smart JPG & PDF.">
+    <meta name="keywords" content="HiteshDesk, Hitesh Desk, Indian School Calendar Generator, School Calendar 2025, Free Calendar Maker, School Almanac Design, CBSE Calendar, ICSE Planner, Printable Calendar PDF, School Diary Format">
+    <meta name="author" content="HiteshDesk">
+    <meta name="robots" content="index, follow">
+    <!-- 👆 SEO Khatam 👆 -->
+    
+    <!-- LIBRARIES -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- UPDATED LIBRARIES FOR SMART SAVE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
+    <style>
+        /* FONTS */
+        @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@700&family=Comfortaa:wght@700&family=Comic+Neue:wght@700&family=Courgette&family=Dancing+Script:wght@700&family=Great+Vibes&family=Indie+Flower&family=Lato:wght@400;700&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@700&family=Roboto:wght@400;700&family=Shadows+Into+Light&display=swap');
+        
+        :root {
+            --primary-color: #2563eb;
+            --sunday-color: #ea580c;
+            --date-text-color: #1e293b;
+            --date-font-size: 28px;
+            --zoom-scale: 1.1;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #e2e8f0; 
+            color: #1e293b; 
+            overflow: hidden;
+            margin: 0; padding: 0;
+        }
+
+        /* --- UI HELPERS --- */
+        .rainbow-wheel {
+            background: conic-gradient(red, orange, yellow, lime, blue, magenta, red);
+            border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s;
+        }
+        .rainbow-wheel:hover { transform: scale(1.2); border-color: #f3f4f6; }
+        .calendar-cell { color: var(--date-text-color); transition: color 0.2s; }
+        .sunday-text { color: var(--sunday-color) !important; }
+        .sunday-header { background-color: var(--sunday-color) !important; }
+
+        .custom-select-wrapper { position: relative; display: inline-block; width: 100%; }
+        .custom-select-list {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            max-height: 200px; overflow-y: auto; background: white;
+            border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 100; border-radius: 4px;
+        }
+        .custom-select-list.show { display: block; }
+        .custom-option { padding: 6px 10px; font-size: 13px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+        .custom-option:hover { background-color: #2563eb; color: white; }
+
+        .rich-content ul { list-style-type: disc !important; margin-left: 20px !important; }
+        .rich-content ol { list-style-type: decimal !important; margin-left: 20px !important; }
+        .rich-content:empty:before { content: attr(data-placeholder); color: #9ca3af; font-style: italic; pointer-events: none; }
+
+        /* --- LAYOUT --- */
+        .app-layout { display: grid; grid-template-columns: 280px 1fr 280px; gap: 0; height: 100vh; }
+        .sidebar { background: #ffffff; border-right: 1px solid #cbd5e1; padding: 1rem; overflow-y: auto; z-index: 10; display: flex; flex-direction: column; }
+        .sidebar-right { border-left: 1px solid #cbd5e1; border-right: none; }
+
+        /* --- TOOLBAR --- */
+        .office-toolbar {
+            background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 0 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 50; position: relative; height: 60px;
+        }
+        
+        .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 10px; }
+        
+        .toolbar-center {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            display: flex; align-items: center; gap: 10px; pointer-events: none;
+        }
+
+        .toolbar-title {
+            font-family: 'Pacifico', cursive; font-size: 1.8rem; font-weight: normal;
+            background: linear-gradient(to right, #2563eb, #ea580c);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); letter-spacing: 1px; white-space: nowrap;
+        }
+
+        .toolbar-group { display: flex; align-items: center; gap: 4px; padding-right: 10px; border-right: 1px solid #cbd5e1; margin-right: 5px; }
+        .tool-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; color: #334155; transition: all 0.2s; border: 1px solid transparent; position: relative; }
+        .tool-btn:hover { background: #e2e8f0; border-color: #cbd5e1; }
+        .tool-select { height: 30px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; padding: 0 5px; background: white; cursor: pointer; max-width: 130px; }
+
+        /* --- CANVAS --- */
+        .canvas-area { background: #94a3b8; overflow: auto; padding: 2rem; display: flex; justify-content: center; align-items: flex-start; height: calc(100vh - 60px); }
+        .calendar-paper {
+            background: white; width: 210mm; height: 297mm; padding: 10mm;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; transform: scale(var(--zoom-scale)); transform-origin: top center; transition: transform 0.2s;
+        }
+        [contenteditable]:focus { outline: 2px dashed var(--primary-color); background: rgba(37, 99, 235, 0.05); }
+
+        .calendar-container { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; border: 2px solid #e2e8f0; border-radius: 6px; margin-bottom: 5px; }
+        #calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; height: 100%; }
+        .calendar-cell { border: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: var(--date-font-size); font-weight: 700; cursor: text; position: relative; }
+        .calendar-cell:hover { background-color: #f8fafc; }
+        .calendar-cell.filled { color: white !important; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+
+        #sections-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .section-card { border: 1px solid #cbd5e1; background: white; display: flex; flex-direction: column; min-height: 100px; }
+        .section-full-width { grid-column: span 1; }
+        .section-full-width.expanded { grid-column: span 3; }
+        
+        .theme-bg { background-color: var(--primary-color) !important; transition: background-color 0.3s; }
+        .theme-text { color: var(--primary-color) !important; transition: color 0.3s; }
+        .color-swatch { width: 20px; height: 20px; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; transition: transform 0.1s; }
+        .color-swatch:hover { transform: scale(1.1); border-color: #666; }
+
+        @media print {
+            @page { margin: 0; size: A4 portrait; }
+            body { margin: 0; padding: 0; overflow: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .no-print, .sidebar, .office-toolbar { display: none !important; }
+            .app-layout { display: block; padding: 0; height: 100vh; }
+            .canvas-area { display: block; padding: 0; background: white; height: 100vh; overflow: visible; }
+            .calendar-paper { margin: 0; box-shadow: none; width: 100%; height: 100vh; padding: 5mm; transform: scale(1) !important; }
+        }
+    </style>
+</head>
+<body onclick="closeAllDropdowns()">
+
+    <!-- TOOLBAR -->
+    <div class="office-toolbar no-print">
+        <div class="toolbar-left">
+            <!-- NEW SMART FILE CONTROLS -->
+            <div class="toolbar-group">
+                <!-- 1. OPEN BUTTON -->
+                <label class="tool-btn text-yellow-600" title="Open Smart File (JPG/PDF/JSON)">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <input type="file" class="hidden" accept=".json, .jpg, .jpeg, .pdf" onchange="handleSmartUpload(this)">
+                </label>
+                
+                <!-- 2. SAVE SMART JPG -->
+                <button onclick="downloadSmartFile('jpg')" class="tool-btn text-blue-600" title="Save Smart JPG (Editable)">
+                    <i class="fa-solid fa-file-image"></i>
+                </button>
+                
+                <!-- 3. SAVE SMART PDF -->
+                <button onclick="downloadSmartFile('pdf')" class="tool-btn text-red-600" title="Save Smart PDF (Editable)">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </button>
+            </div>
+            <!-- END NEW CONTROLS -->
+
+            <div class="toolbar-group">
+                <select onchange="document.execCommand('fontName', false, this.value)" class="tool-select">
+                    <option value="Poppins">Poppins</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Open Sans">Open Sans</option>
+                    <option value="Lato">Lato</option>
+                    <option value="Montserrat">Montserrat</option>
+                    <option value="Oswald">Oswald</option>
+                    <option value="Raleway">Raleway</option>
+                    <option value="Merriweather">Merriweather</option>
+                    <option value="Playfair Display">Playfair</option>
+                    <option value="Comfortaa">Comfortaa</option>
+                    <option value="Comic Neue">Comic Neue</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times</option>
+                    <option value="Great Vibes">Great Vibes</option>
+                    <option value="Dancing Script">Dancing Script</option>
+                    <option value="Pacifico">Pacifico</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Indie Flower">Indie Flower</option>
+                    <option value="Shadows Into Light">Shadows Into Light</option>
+                    <option value="Amatic SC">Amatic SC</option>
+                    <option value="Caveat">Caveat</option>
+                    <option value="Courgette">Courgette</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <button onclick="document.execCommand('bold')" class="tool-btn font-bold">B</button>
+                <button onclick="document.execCommand('italic')" class="tool-btn italic">I</button>
+                <button onclick="document.execCommand('underline')" class="tool-btn underline">U</button>
+                <div class="relative group tool-btn" title="Text Color">
+                    <i class="fa-solid fa-font"></i>
+                    <div class="h-1 w-full bg-black absolute bottom-0 left-0"></div>
+                    <input type="color" class="absolute opacity-0 w-full h-full cursor-pointer top-0 left-0" oninput="document.execCommand('foreColor', false, this.value)">
+                </div>
+                <div class="relative group tool-btn" title="Highlight Text">
+                    <i class="fa-solid fa-highlighter"></i>
+                    <div class="h-1 w-full bg-yellow-400 absolute bottom-0 left-0"></div>
+                    <input type="color" class="absolute opacity-0 w-full h-full cursor-pointer top-0 left-0" oninput="document.execCommand('hiliteColor', false, this.value)">
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <button class="tool-btn" title="Bullets" onclick="applySimpleCommand('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                <button class="tool-btn" title="Numbering" onclick="applySimpleCommand('insertOrderedList')"><i class="fa-solid fa-list-ol"></i></button>
+            </div>
+        </div>
+
+        <div class="toolbar-center">
+            <img id="toolbar-logo" src="" class="h-10 w-10 object-contain hidden">
+            <span class="toolbar-title">HiteshDesk</span>
+        </div>
+
+        <div class="toolbar-right">
+            <div class="toolbar-group border-none flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass-minus text-xs text-gray-400"></i>
+                <input type="range" min="0.5" max="1.5" step="0.1" value="1.1" class="w-20 cursor-pointer" oninput="updateZoom(this.value)">
+                <i class="fa-solid fa-magnifying-glass-plus text-xs text-gray-400"></i>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold hover:bg-black">Print</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP LAYOUT -->
+    <div class="app-layout">
+        
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar no-print">
+            <h2 class="text-sm font-bold text-gray-600 uppercase border-b pb-2 mb-4">Calendar Setup</h2>
+            <div class="space-y-4 flex-grow overflow-y-auto">
+                <div>
+                    <label class="text-xs font-bold text-gray-800 block mb-2">Date Number Color</label>
+                    <div class="flex flex-wrap gap-1" id="date-color-container"></div>
+                    <div class="mt-2 flex items-center gap-2 bg-gray-50 p-1 rounded border">
+                        <input type="color" class="w-6 h-6 border-0 p-0 cursor-pointer" oninput="setDateColor(this.value)">
+                        <span class="text-[10px] text-gray-500">Custom</span>
+                    </div>
+                </div>
+                <hr class="border-gray-200">
+                <div>
+                    <label class="text-xs font-bold text-gray-800 block mb-2">Sunday/Holiday Color</label>
+                    <div class="flex flex-wrap gap-1" id="sunday-palette-container"></div>
+                    <div class="mt-2 flex items-center gap-2 bg-gray-50 p-1 rounded border">
+                        <input type="color" class="w-6 h-6 border-0 p-0 cursor-pointer" oninput="setSundayColor(this.value)">
+                        <span class="text-[10px] text-gray-500">Custom</span>
+                    </div>
+                </div>
+                <hr class="border-gray-200">
+                <div>
+                    <label class="text-xs font-bold text-gray-800 block mb-2">Template Theme Color</label>
+                    <div class="flex flex-wrap gap-1" id="theme-palette-container"></div>
+                    <div class="mt-2 flex items-center gap-2 bg-gray-50 p-1 rounded border">
+                        <input type="color" class="w-6 h-6 border-0 p-0 cursor-pointer" oninput="setThemeColor(this.value)">
+                        <span class="text-[10px] text-gray-500">Custom Theme</span>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-2 rounded border border-gray-200">
+                    <label class="text-xs font-bold text-gray-400 block mb-1">Month Alignment</label>
+                    <div class="flex gap-1">
+                        <button onclick="alignMonth('start')" class="flex-1 border bg-white py-1 rounded hover:bg-blue-50"><i class="fa-solid fa-align-left"></i></button>
+                        <button onclick="alignMonth('center')" class="flex-1 border bg-white py-1 rounded hover:bg-blue-50"><i class="fa-solid fa-align-center"></i></button>
+                        <button onclick="alignMonth('end')" class="flex-1 border bg-white py-1 rounded hover:bg-blue-50"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400">School Name</label>
+                    <input type="text" id="school-name-input" value="ADARSH PUBLIC SCHOOL, PILANI" class="w-full border rounded px-2 py-1 text-sm mt-1" oninput="updateTitleText()">
+                </div>
+                <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                    <label class="text-xs font-bold text-blue-800">Logo</label>
+                    <input type="file" accept="image/*" class="w-full text-xs mt-1" onchange="handleLogo(this)">
+                    <input type="range" min="40" max="150" value="80" class="w-full mt-2" oninput="document.getElementById('school-logo').style.height = this.value + 'px'">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400">Date Grid Font Size</label>
+                    <input type="range" min="16" max="60" value="28" class="w-full" oninput="document.documentElement.style.setProperty('--date-font-size', this.value + 'px')">
+                </div>
+
+                <!-- 👇 LEFT SIDEBAR AD (AT BOTTOM) 👇 -->
+                <div class="mt-auto pt-6 border-t border-gray-300 flex justify-center">
+                    <script type="text/javascript">
+                        atOptions = { 'key' : 'c85ccd5cfbb23e477e6eab47f44cfd56', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
+                    </script>
+                    <script type="text/javascript" src="//www.highperformanceformat.com/c85ccd5cfbb23e477e6eab47f44cfd56/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER CANVAS -->
+        <div class="canvas-area">
+            <div class="calendar-paper" id="printable-area">
+                <div id="page-border" class="absolute inset-2 border-4 border-transparent pointer-events-none z-50"></div>
+                <div class="flex-none mb-2">
+                    <div class="flex items-center justify-center gap-4 mb-2">
+                        <img id="school-logo" src="" class="hidden object-contain" style="height: 80px;">
+                        <div id="main-title" class="text-4xl font-extrabold theme-text uppercase text-center leading-tight outline-none" contenteditable="true" spellcheck="false">ADARSH PUBLIC SCHOOL, PILANI</div>
+                    </div>
+                    <div id="month-header-container" class="flex items-center justify-center gap-4 w-full">
+                        <button onclick="changeMonth(-1)" class="text-gray-400 hover:text-blue-600 no-print text-2xl"><i class="fa-solid fa-caret-left"></i></button>
+                        <h2 id="current-month-display" class="text-xl font-bold text-gray-700 uppercase tracking-widest">DECEMBER 2025</h2>
+                        <button onclick="changeMonth(1)" class="text-gray-400 hover:text-blue-600 no-print text-2xl"><i class="fa-solid fa-caret-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-container shadow-sm">
+                    <div class="flex text-white font-bold text-center uppercase text-sm tracking-wider">
+                        <div class="theme-bg py-2 flex-1">Mon</div><div class="theme-bg py-2 flex-1">Tue</div><div class="theme-bg py-2 flex-1">Wed</div>
+                        <div class="theme-bg py-2 flex-1">Thu</div><div class="theme-bg py-2 flex-1">Fri</div><div class="theme-bg py-2 flex-1">Sat</div>
+                        <div class="sunday-header py-2 flex-1">Sun</div>
+                    </div>
+                    <div id="calendar-grid"></div>
+                </div>
+                <div class="flex-none flex flex-col gap-2">
+                    <div id="sections-container"></div>
+                    <div class="quote-box" style="margin-bottom: 20px;">
+                        <p id="footer-quote" class="font-semibold italic text-sm outline-none text-center p-3 rounded text-white" 
+                           style="background: linear-gradient(to right, var(--primary-color), #000); padding: 12px; margin-top: 5px; flex-shrink: 0;"
+                           contenteditable="true">
+                            "Education is the passport to the future, for tomorrow belongs to those who prepare for it today."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR (EDIT CONTENT) -->
+        <div class="sidebar sidebar-right no-print">
+            <h2 class="text-sm font-bold text-gray-600 uppercase border-b pb-2 mb-4">Edit Content</h2>
+            <div class="space-y-4 flex-grow overflow-y-auto">
+                <div class="bg-purple-50 p-3 rounded border border-purple-200">
+                    <label class="text-xs font-bold text-purple-800 block mb-2"><i class="fa-solid fa-text-height"></i> Text Size</label>
+                    <div class="custom-select-wrapper" onclick="event.stopPropagation()">
+                        <div class="flex items-center border rounded bg-white overflow-hidden h-8">
+                            <input type="number" id="fontSizeInput" min="8" max="100" value="16" class="w-full h-full px-2 text-sm outline-none border-none" onmousedown="saveSelection()" oninput="applyFontSize(this.value, false)" onclick="toggleFontSizeList()">
+                            <button class="px-2 text-gray-500 bg-gray-100 h-full border-l hover:bg-gray-200" onclick="toggleFontSizeList()"><i class="fa-solid fa-caret-down text-xs"></i></button>
+                        </div>
+                        <div id="fontSizeList" class="custom-select-list"></div>
+                    </div>
+                </div>
+                <button onclick="addNewSection()" class="w-full border-2 border-dashed border-gray-400 text-gray-600 py-3 rounded hover:bg-gray-50 text-sm font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-plus-circle"></i> Add Section</button>
+                <hr>
+                <label class="text-xs font-bold text-gray-400 block mb-2">Section Style</label>
+                <div class="flex gap-2 mb-4">
+                    <button onclick="changeStyle('style-rounded')" class="text-xs border px-2 py-1 rounded hover:bg-gray-100">Round</button>
+                    <button onclick="changeStyle('style-sharp')" class="text-xs border px-2 py-1 rounded hover:bg-gray-100">Sharp</button>
+                    <button onclick="changeStyle('style-shadow')" class="text-xs border px-2 py-1 rounded hover:bg-gray-100">Shadow</button>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-800 block mb-2">Page Border Color</label>
+                    <div class="flex flex-wrap gap-1" id="border-palette-container"></div>
+                    <div class="mt-2 flex items-center gap-2 bg-gray-50 p-1 rounded border">
+                        <div onclick="setPageBorder('transparent')" class="w-6 h-6 border bg-white flex items-center justify-center cursor-pointer" title="No Border"><i class="fa-solid fa-ban text-xs text-red-500"></i></div>
+                        <input type="color" class="w-6 h-6 border-0 p-0 cursor-pointer" oninput="setPageBorder(this.value)">
+                        <span class="text-[10px] text-gray-500">Custom</span>
+                    </div>
+                </div>
+                <hr>
+                <div>
+                     <label class="text-xs font-bold text-gray-500 mb-2 block">Highlight Date Box</label>
+                     <div class="flex flex-wrap gap-1" id="palette-container"></div>
+                     <div class="mt-2 flex items-center gap-2 bg-gray-50 p-1 rounded border">
+                        <input type="color" class="w-6 h-6 border-0 p-0 cursor-pointer" oninput="activeFillColor = this.value">
+                        <span class="text-[10px] text-gray-500">Custom</span>
+                    </div>
+                </div>
+
+                <!-- 👇 RIGHT SIDEBAR AD (AT BOTTOM) 👇 -->
+                <div class="mt-auto pt-6 border-t border-gray-300 flex justify-center">
+                    <script type="text/javascript">
+                        atOptions = { 'key' : 'c85ccd5cfbb23e477e6eab47f44cfd56', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
+                    </script>
+                    <script type="text/javascript" src="//www.highperformanceformat.com/c85ccd5cfbb23e477e6eab47f44cfd56/invoke.js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIC -->
+    <script>
+        let currentDate = new Date();
+        let activeFillColor = '#fca5a5';
+        let filledDates = {};
+        let currentSectionStyle = 'style-rounded';
+        let savedSelectionRange = null;
+
+        const SECRET_SEPARATOR = "|||SMART_DATA_START|||";
+        const { jsPDF } = window.jspdf;
+
+        const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+        const paletteColors = ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#fca5a5', '#fdba74', '#fde047', '#bef264', '#cbd5e1'];
+        const borderColors = ['#000000', '#2563eb', '#dc2626', '#16a34a', '#d97706', '#9333ea', '#db2777', '#0891b2', '#4b5563', '#84cc16'];
+        const themeColors = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed', '#db2777', '#0891b2', '#0f172a', '#be123c', '#059669'];
+        const sundayColors = ['#ea580c', '#dc2626', '#16a34a', '#2563eb', '#db2777', '#9333ea', '#0d9488', '#000000', '#78350f', '#be185d'];
+        const dateTextColors = ['#1e293b', '#000000', '#2563eb', '#dc2626', '#16a34a', '#4b5563', '#9333ea', '#d97706', '#db2777', '#0891b2'];
+
+        let sections = [
+            { title: "EXAM SCHEDULE", color: "#2563eb", content: "<div>Unit Test II begins</div><div>Maths (10th) - 12th Dec</div>", expanded: false },
+            { title: "HOLIDAYS", color: "#2563eb", content: "<div>25 Dec - Christmas Day</div><div>31 Dec - Winter Break</div>", expanded: false },
+            { title: "ACTIVITIES", color: "#2563eb", content: "<div>Sports Day Registration</div><div>Annual Function</div>", expanded: false }
+        ];
+
+        window.onload = function() {
+            renderPalette(); renderBorderPalette(); renderThemePalette(); renderSundayPalette(); renderDateColorPalette();
+            renderCalendar(); renderSections(); initDragAndDrop(); populateFontSizeDropdown(); initSelectionListener();
+        };
+
+        // --- NEW SMART FILE LOGIC ---
+        
+        // 1. UPLOAD HANDLER
+        function handleSmartUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            if (file.type === "application/json") {
+                reader.onload = e => tryParseJSON(e.target.result);
+                reader.readAsText(file);
+            } else {
+                // For JPG/PDF read as binary to find secret data
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    if (content.includes(SECRET_SEPARATOR)) {
+                        try {
+                            const parts = content.split(SECRET_SEPARATOR);
+                            const hiddenJson = parts[parts.length - 1]; 
+                            tryParseJSON(hiddenJson);
+                        } catch (err) { alert("Data extraction failed."); }
+                    } else {
+                        alert("File loaded, but no hidden data found. It's just a regular image/pdf.");
+                    }
+                };
+                reader.readAsBinaryString(file);
+            }
+        }
+
+function tryParseJSON(jsonStr) {
+            try {
+                const d = JSON.parse(jsonStr);
+                
+                // Data set kar rahe hain
+                document.getElementById('main-title').innerText = d.schoolName; 
+                document.getElementById('footer-quote').innerText = d.quote; 
+                currentDate = new Date(d.year, d.month, 1); 
+                filledDates = d.filledDates; 
+                sections = d.sections; 
+                
+                // Logo set kar rahe hain
+                if(d.logoSrc) { 
+                    document.getElementById('school-logo').src = d.logoSrc; 
+                    document.getElementById('school-logo').classList.remove('hidden'); 
+                    document.getElementById('toolbar-logo').src = d.logoSrc; 
+                    document.getElementById('toolbar-logo').classList.remove('hidden'); 
+                } 
+                
+                // Calendar render kar rahe hain
+                renderCalendar(); 
+                renderSections(); 
+                
+                // Yahan pehle Alert tha, ab wo hata diya gaya hai.
+                
+            } catch (e) { 
+                alert("Invalid Data Format"); // Error aane par hi popup aayega
+            }
+        }
+
+        // 2. SAVE HANDLER (Smart JPG / PDF)
+        function downloadSmartFile(type) {
+            const element = document.getElementById('printable-area');
+            
+            // Collect Data
+            const data = { 
+                schoolName: document.getElementById('main-title').innerText, 
+                quote: document.getElementById('footer-quote').innerText, 
+                month: currentDate.getMonth(), 
+                year: currentDate.getFullYear(), 
+                filledDates, 
+                sections, 
+                logoSrc: document.getElementById('school-logo').src 
+            };
+            const jsonString = JSON.stringify(data);
+
+            // Temporarily reset zoom for clean capture
+            const originalTransform = element.style.transform;
+            element.style.transform = 'scale(1)';
+
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                element.style.transform = originalTransform; // Restore zoom
+                
+                const fileName = `Calendar_${monthNames[currentDate.getMonth()]}_${currentDate.getFullYear()}.${type}`;
+
+                if (type === 'jpg') {
+                    canvas.toBlob(function(blob) {
+                        const smartBlob = new Blob([blob, SECRET_SEPARATOR, jsonString], { type: "image/jpeg" });
+                        saveBlob(smartBlob, fileName);
+                    }, 'image/jpeg', 0.9);
+                } 
+                else if (type === 'pdf') {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight); // Fit to page
+                    
+                    const pdfBlob = pdf.output('blob');
+                    const smartPdfBlob = new Blob([pdfBlob, SECRET_SEPARATOR, jsonString], { type: 'application/pdf' });
+                    saveBlob(smartPdfBlob, fileName);
+                }
+            });
+        }
+
+        function saveBlob(blob, fileName) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+
+        // --- EXISTING LOGIC ---
+        function initSelectionListener() {
+            document.addEventListener('selectionchange', () => {
+                const sel = window.getSelection();
+                if (sel.rangeCount > 0) {
+                    const range = sel.getRangeAt(0);
+                    const container = document.getElementById('printable-area');
+                    if (container.contains(range.commonAncestorContainer)) {
+                        savedSelectionRange = range.cloneRange();
+                        let el = range.commonAncestorContainer.nodeType === 3 ? range.commonAncestorContainer.parentElement : range.commonAncestorContainer;
+                        const computed = window.getComputedStyle(el).fontSize;
+                        const size = parseInt(computed.replace('px', ''));
+                        if(!isNaN(size)) document.getElementById('fontSizeInput').value = size;
+                    }
+                }
+            });
+        }
+        function saveSelection() { }
+        function restoreSelection() {
+            if (savedSelectionRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedSelectionRange);
+            }
+        }
+        function populateFontSizeDropdown() {
+            const list = document.getElementById('fontSizeList');
+            let html = '';
+            for(let i=8; i<=100; i++) {
+                html += `<div class="custom-option" onmouseenter="applyFontSize('${i}', true)" onclick="applyFontSize('${i}', false)">${i}</div>`;
+            }
+            list.innerHTML = html;
+        }
+        function toggleFontSizeList() {
+            const list = document.getElementById('fontSizeList');
+            if(list.classList.contains('show')) { list.classList.remove('show'); } else { list.classList.add('show'); restoreSelection(); }
+        }
+        function closeAllDropdowns() { document.getElementById('fontSizeList').classList.remove('show'); }
+        function applyFontSize(val, isPreview) {
+            document.getElementById('fontSizeInput').value = val;
+            restoreSelection();
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            document.execCommand("fontSize", false, "7");
+            const fontElements = document.getElementsByTagName("font");
+            for (let i = 0; i < fontElements.length; i++) {
+                if (fontElements[i].size == "7") {
+                    fontElements[i].removeAttribute("size");
+                    fontElements[i].style.fontSize = val + "px";
+                }
+            }
+            if (!isPreview) closeAllDropdowns();
+        }
+
+        function handleSectionColorLive(idx, color) {
+            sections[idx].color = color;
+            const header = document.getElementById(`sec-header-${idx}`);
+            if(header) header.style.backgroundColor = color;
+        }
+
+        function renderDateColorPalette() {
+            const container = document.getElementById('date-color-container');
+            dateTextColors.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'color-swatch'; el.style.backgroundColor = c;
+                el.onclick = () => setDateColor(c); container.appendChild(el);
+            });
+        }
+        function setDateColor(color) { document.documentElement.style.setProperty('--date-text-color', color); }
+
+        function renderSundayPalette() {
+            const container = document.getElementById('sunday-palette-container');
+            sundayColors.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'color-swatch'; el.style.backgroundColor = c;
+                el.onclick = () => setSundayColor(c); container.appendChild(el);
+            });
+        }
+        function setSundayColor(color) { document.documentElement.style.setProperty('--sunday-color', color); }
+
+        function renderThemePalette() {
+            const container = document.getElementById('theme-palette-container');
+            themeColors.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'color-swatch'; el.style.backgroundColor = c;
+                el.onclick = () => setThemeColor(c); container.appendChild(el);
+            });
+        }
+        function setThemeColor(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+            sections.forEach(sec => sec.color = color);
+            renderSections();
+        }
+        function renderBorderPalette() {
+            const container = document.getElementById('border-palette-container');
+            borderColors.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'color-swatch'; el.style.backgroundColor = c;
+                el.onclick = () => setPageBorder(c); container.appendChild(el);
+            });
+        }
+        function setPageBorder(color) {
+            const borderDiv = document.getElementById('page-border');
+            if (color === 'transparent') { borderDiv.style.borderColor = 'transparent'; borderDiv.style.borderWidth = '0px'; } 
+            else { borderDiv.style.borderColor = color; borderDiv.style.borderWidth = '5px'; }
+        }
+        function renderPalette() {
+            const container = document.getElementById('palette-container');
+            paletteColors.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'color-swatch'; el.style.backgroundColor = c;
+                el.onclick = () => activeFillColor = c; container.appendChild(el);
+            });
+        }
+
+        function updateZoom(val) { document.documentElement.style.setProperty('--zoom-scale', val); }
+        function applySimpleCommand(cmd) { document.execCommand(cmd, false, null); }
+        function alignMonth(alignment) {
+            const container = document.getElementById('month-header-container');
+            container.classList.remove('justify-start', 'justify-center', 'justify-end');
+            container.classList.add('justify-' + alignment);
+        }
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            document.getElementById('current-month-display').innerText = `${monthNames[month]} ${year}`;
+            let firstDayJS = new Date(year, month, 1).getDay(); 
+            let startingSlot = firstDayJS === 0 ? 6 : firstDayJS - 1;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < startingSlot; i++) grid.innerHTML += `<div class="calendar-cell bg-gray-50 border-white"></div>`;
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${month}-${day}`;
+                const savedData = filledDates[dateKey];
+                const isSunday = (startingSlot + day - 1) % 7 === 6;
+                const cell = document.createElement('div');
+                cell.className = `calendar-cell ${isSunday ? 'sunday-text bg-orange-50' : ''}`;
+                cell.innerText = day;
+                cell.contentEditable = true; 
+                if (savedData) { if(typeof savedData === 'string') { cell.style.backgroundColor = savedData; cell.classList.add('filled'); } }
+                cell.onclick = (e) => { if (e.target !== cell) return; if(!savedData) { filledDates[dateKey] = activeFillColor; renderCalendar(); } else { delete filledDates[dateKey]; renderCalendar(); } };
+                grid.appendChild(cell);
+            }
+        }
+        function renderSections() {
+            const container = document.getElementById('sections-container');
+            container.innerHTML = '';
+            sections.forEach((sec, idx) => {
+                const colClass = sec.expanded ? 'expanded' : '';
+                const html = `
+                <div class="section-card section-full-width ${colClass} ${currentSectionStyle}">
+                    <div id="sec-header-${idx}" class="section-header-area text-white px-2 py-1 flex justify-between items-center" style="background-color: ${sec.color}; border-radius: 4px 4px 0 0;">
+                        <span contenteditable="true" class="font-bold text-xs uppercase tracking-wide outline-none">${sec.title}</span>
+                        <div class="flex items-center gap-2 text-xs no-print text-white/80" onmousedown="event.stopPropagation()">
+                             <i onclick="toggleExpand(${idx})" class="fa-solid fa-left-right cursor-pointer hover:text-white" title="Toggle Width"></i>
+                             <div class="relative w-4 h-4 cursor-pointer hover:scale-110 transition rainbow-wheel" title="Change Heading Color">
+                                <input type="color" class="absolute inset-0 opacity-0 cursor-pointer" value="${sec.color}" oninput="handleSectionColorLive(${idx}, this.value)">
+                             </div>
+                             <i onclick="deleteSection(${idx})" class="fa-solid fa-trash cursor-pointer hover:text-white"></i>
+                        </div>
+                    </div>
+                    <div class="p-2 text-gray-700 flex-grow text-xs outline-none bg-white rich-content" data-placeholder="Type here..." contenteditable="true" onblur="saveSectionContent(${idx}, this.innerHTML)">${sec.content}</div>
+                </div>`;
+                container.innerHTML += html;
+            });
+            initDragAndDrop();
+        }
+        function initDragAndDrop() {
+            Sortable.create(document.getElementById('sections-container'), { animation: 150, handle: '.section-header-area', onEnd: function (evt) { const item = sections.splice(evt.oldIndex, 1)[0]; sections.splice(evt.newIndex, 0, item); } });
+        }
+        function saveSectionContent(idx, html) { sections[idx].content = html; }
+        function updateSectionColor(idx, val) { sections[idx].color = val; renderSections(); }
+        function toggleExpand(idx) { sections[idx].expanded = !sections[idx].expanded; renderSections(); }
+        function deleteSection(idx) { sections.splice(idx, 1); renderSections(); }
+        function addNewSection() { 
+            sections.push({ title: "NEW SECTION", color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(), content: "", expanded: false }); 
+            renderSections();
+            setTimeout(() => { const newSec = document.querySelectorAll('.rich-content'); if(newSec.length > 0) newSec[newSec.length-1].focus(); }, 50);
+        }
+        function changeStyle(style) { currentSectionStyle = style; renderSections(); }
+        function changeMonth(d) { currentDate.setMonth(currentDate.getMonth()+d); renderCalendar(); }
+        function updateTitleText() { document.getElementById('main-title').innerText = document.getElementById('school-name-input').value; }
+        function handleLogo(input) { if (input.files[0]) { const reader = new FileReader(); reader.onload = (e) => { 
+            const src = e.target.result;
+            document.getElementById('school-logo').src = src; document.getElementById('school-logo').classList.remove('hidden');
+            document.getElementById('toolbar-logo').src = src; document.getElementById('toolbar-logo').classList.remove('hidden');
+        }; reader.readAsDataURL(input.files[0]); } }
+    </script>
+</body>
+</html>
